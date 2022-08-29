@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'djoser',
     'rest_framework',
-    #    'api.apps.ApiConfig',
+    'api.apps.ApiConfig',
     'recept.apps.ReceptConfig',
     'users.apps.UsersConfig',
 ]
@@ -79,7 +79,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 DJOSER = {
-    'LOGIN_FIEED': 'email'
+    'LOGIN_FIEED': 'username'
 }
 
 REST_FRAMEWORK = {
@@ -107,10 +107,3 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'build/static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 AUTH_USER_MODEL = 'users.UserAccount'
-
-EMAIL_BACAKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'ultanoff@yandex.ru'
-EMAIL_HOST_PASSWORD = 'Gatinap54'
-EMAIL_USE_TLS = True

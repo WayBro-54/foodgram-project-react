@@ -24,3 +24,4 @@ class RecipesAdmin(admin.ModelAdmin):
 admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags)
 admin.site.register(Ingredients)
+admin.site.register(UserAccount)

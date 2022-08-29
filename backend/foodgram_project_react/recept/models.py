@@ -25,6 +25,7 @@ class Recipes(models.Model):
         verbose_name='Название',
     )
     image = models.ImageField(
+        blank=True,
         verbose_name='Изображение'
     )
     text = models.TextField(
@@ -117,3 +118,28 @@ class RecipesTags(models.Model):
 
     def __str__(self):
         return f'{self.tags}, {self.recipes}'
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Пользователь'
+    )
+    author = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Автор'
+    )
+
+    class Meta:
+        verbose_name = 'Последователи'
+        verbose_name_plural = 'Последователи'
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'author'], name='unique follow'
+        )]
+
+    def __str__(self):
+        return f"Последователь: '{self.user}', автор: '{self.author}'"
