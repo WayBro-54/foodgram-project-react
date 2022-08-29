@@ -1,12 +1,18 @@
 from django.db import models
+from users.models import UserAccount
 
-from users.models import User
 
-
-class Recipes(models.model):
-    tags = models.ManyToManyField()
+class Recipes(models.Model):
+    tags = models.ManyToManyField(
+        'Tags',
+        through='RecipesTags',
+        verbose_name='Теги'
+    )
     author = models.ForeignKey(
-        'User'
+        UserAccount,
+        on_delete=models.PROTECT,
+        related_name='author',
+        verbose_name='Автор'
     )
     ingridients = models.ForeignKey(
         'Ingredients',
@@ -18,8 +24,18 @@ class Recipes(models.model):
         max_length=200,
         verbose_name='Название',
     )
-    text = models.TextField()
-    cooking_time = models.IntegerField()
+    image = models.ImageField(
+        verbose_name='Изображение'
+    )
+    text = models.TextField(
+        verbose_name='Описание рецепта'
+    )
+    cooking_time = models.IntegerField(
+        verbose_name='Время приготовления'
+    )
+    pub_date = models.DateTimeField(
+        auto_now=True
+    )
 
     class Meta:
         verbose_name = 'Рецепты'
@@ -41,12 +57,16 @@ class Tags(models.Model):
     )
     slug = models.SlugField(
         max_length=200,
-        unique=True
+        unique=True,
+        verbose_name='Слаг'
     )
 
     class Meta:
         verbose_name = 'Теги'
         verbose_name_plural = 'Теги'
+
+    def __str__(self) -> str:
+        return f'{self.name} {self.color} {self.slug}'
 
 
 class Ingredients(models.Model):
@@ -61,9 +81,39 @@ class Ingredients(models.Model):
     ingridients_amout = models.ForeignKey(
         'IngredientsAmout',
         on_delete=models.CASCADE,
-        related_name='amout'
+        related_name='isamout',
+        blank=True,
+        verbose_name='Количество',
+        null=True
     )
+
+    class Meta:
+        verbose_name = 'Ингредиенты'
+        verbose_name_plural = 'Ингредиенты'
 
 
 class IngredientsAmout(models.Model):
-    amout = models.FloatField()
+    amout = models.FloatField(
+        null=True,
+        verbose_name='Количество'
+    )
+
+
+class RecipesTags(models.Model):
+    tags = models.ForeignKey(
+        Tags,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Теги'
+    )
+    recipes = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепты'
+    )
+
+    class Meta:
+        verbose_name = 'Рецепты и теги'
+        verbose_name_plural = 'Рецепты и теги'
+
+    def __str__(self):
+        return f'{self.tags}, {self.recipes}'

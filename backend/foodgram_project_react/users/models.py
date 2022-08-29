@@ -1,34 +1,85 @@
 
 from django.db import models
 
-from django.contrib.auth.models import AbstractUser
-# from django.contrib.auth.hashers import (
-#     check_password, is_password_usable, make_password,
-# )
+from django.contrib.auth.models import AbstractUser, PermissionsMixin, BaseUserManager
 
 
-class User(AbstractUser):
-    ROLES = (
-        ('user', 'user'),
-        ('admin', 'admin')
-    )
+USER = 'user'
+ADMIN = 'admin'
+
+
+class UserAccountManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError('Users mist have an email address')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name)
+        user.set_password(password)
+        user.save()
+
+        return user
+
+
+class UserAccount(AbstractUser):
     email = models.EmailField(
+        max_length=255,
         unique=True
     )
-    username = models.CharField(
-        max_length=150,
-        unique=True,
-        verbose_name='Логин'
-    )
-    password = models.CharField(_('password'), max_length=128)
-    first_name = models.CharField(
-        max_length=150,
-        verbose_name='Имя'
-    )
-    last_name = models.CharField(
-        max_length=150,
-        verbose_name='Фамилия'
-    )
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
 
-    class Meta:
-        abstract = True
+    objects = UserAccountManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
+
+    def get_full_name(self):
+        return self.name
+
+    def get_short_name(self):
+        return self.name
+
+    def __str__(self):
+        return self.email
+# class User(AbstractUser, PermissionsMixin):
+#     ROLES = (
+#         (USER, USER),
+#         (ADMIN, ADMIN),
+#     )
+
+#     username = models.CharField(
+#         max_length=255,
+#         unique=True,
+
+#     )
+#     email = models.EmailField(
+#         max_length=255,
+#         unique=True
+#     )
+#     first_name = models.CharField(max_length=150, blank=True)
+#     last_name = models.CharField(max_length=150, blank=True)
+#     bio = models.TextField(blank=True,)
+#     role = models.CharField(
+#         max_length=max(len(role) for role, _ in ROLES),
+#         choices=ROLES,
+#         default=USER
+#     )
+#     confirmation_code = models.CharField(
+#         max_length=15,
+#         blank=True,
+#         null=True
+#     )
+#     objects = UserAccountManager
+
+#     class Meta:
+#         ordering = ('username',)
+#         verbose_name = 'Пользователь'
+#         verbose_name_plural = 'Пользователи'
+#         constraints = [
+#             models.UniqueConstraint(
+#                 fields=['username', 'email'],
+#                 name='уникальные пользователи'
+#             )
+#         ]
