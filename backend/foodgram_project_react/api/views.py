@@ -8,6 +8,7 @@ from recept.models import (
 from .serialisers import (
     TagsSerialiser,
     IngredientsSerialier,
+    IngredientRecipesSerialiser,
     RecipesSerialiser,
     UserSerialiser
 )
@@ -35,5 +36,5 @@ class TagsView(ListObjectViewset):
 
 
 class IngdientsView(ListObjectViewset):
-    serializer_class = IngredientsSerialier
+    serializer_class = IngredientRecipesSerialiser
     queryset = Ingredients.objects.all()

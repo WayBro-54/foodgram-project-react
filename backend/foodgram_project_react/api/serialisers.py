@@ -1,5 +1,6 @@
-from email.policy import default
-from djoser.serializers import UserCreateSerializer
+
+from dataclasses import field
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
@@ -7,14 +8,50 @@ from recept.models import (
     Ingredients,
     Recipes,
     Tags,
+    Follow
 )
+from users.models import UserAccount
 User = get_user_model()
 
 
-class UserSerialiser(UserCreateSerializer):
+class UserCreateSerialiser(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = ('email', 'username', 'password')
+        fields = (
+            'email',
+            'id',
+            'username',
+            'password',
+            'first_name',
+            'last_name'
+        )
+
+class UserSerialiser(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, obj):
+        if self.context['request'].user:
+            return False
+        return Follow.objects.filter(
+            user=self.context['request'].user,
+            author=obj
+        )
+
+    class Meta:
+        model = User
+        fields =(
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed'
+        )
+
+
+class PasswordSerializer(serializers.Seializer):
+    current_password = serializers.CharField(reqired=True)
+    new_password = serializers.CharField(reqired=True)
 
 
 class TagsSerialiser(serializers.ModelSerializer):
@@ -45,14 +82,16 @@ class IngredientsSerialier(serializers.ModelSerializer):
 
 class IngredientRecipesSerialiser(serializers.ModelSerializer):
 
+
     class Meta:
         model = Ingredients
         fields = (
             'id',
             'name',
-            'measurement_unit'
+            'measurement_unit',
+            'amout'
         )
-        read_only = ('__all__')
+
 
 
 class RecipesSerialiser(serializers.ModelSerializer):
@@ -71,7 +110,7 @@ class RecipesSerialiser(serializers.ModelSerializer):
             #    'tags',
             'author',
             # 'ingridients',
-            'is_favorited',
+            # 'is_favorited',
             # 'is_in_shopping_cart',
             'name',
             'image',
@@ -81,4 +120,8 @@ class RecipesSerialiser(serializers.ModelSerializer):
         read_only = '__all__'
 
     def get_is_favorited(self, obj):
-        return True
+        if self.context.get['request']:
+            return False
+        
+            
+            
