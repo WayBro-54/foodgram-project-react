@@ -3,20 +3,13 @@ from recept.models import (
     Tags,
     Recipes,
     Ingredients,
-    UserAccount
 )
 from .serialisers import (
     TagsSerialiser,
     IngredientsSerialier,
     IngredientRecipesSerialiser,
     RecipesSerialiser,
-    UserSerialiser
 )
-
-
-class UserViewset(viewsets.ModelViewSet):
-    queryset = UserAccount.objects.all()
-    serializer_class = UserSerialiser
 
 
 class ListObjectViewset(mixins.ListModelMixin,
@@ -36,5 +29,5 @@ class TagsView(ListObjectViewset):
 
 
 class IngdientsView(ListObjectViewset):
-    serializer_class = IngredientRecipesSerialiser
+    serializer_class = IngredientsSerialier
     queryset = Ingredients.objects.all()

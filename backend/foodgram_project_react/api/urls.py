@@ -5,15 +5,15 @@ from .views import (
     TagsView,
     IngdientsView,
     RecipesViewset,
-    UserViewset
 )
+from users.views import UserAccountViewset
 
 router_v1 = DefaultRouter()
 router_v1.register('tags', TagsView, basename='tags')
 router_v1.register('ingredients', IngdientsView, basename='ingredients')
 router_v1.register('recipes', RecipesViewset, basename='recipes')
-router_v1.register('users', UserViewset, basename='users')
+router_v1.register('users', UserAccountViewset, basename='users')
 
 urlpatterns = [
-    path('v1/', include(router_v1.urls))
+    path('', include(router_v1.urls))
 ]

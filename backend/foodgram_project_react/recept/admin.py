@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import (Ingredients, Recipes, RecipesTags,
-                     Tags, IngredientsAmout, UserAccount)
+                     Tags, IngredientsAmout,  # UserAccount
+                     )
 
 
 class RecipesAdmin(admin.ModelAdmin):
@@ -24,4 +25,4 @@ class RecipesAdmin(admin.ModelAdmin):
 admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Tags)
 admin.site.register(Ingredients)
-admin.site.register(UserAccount)
+# admin.site.register(UserAccount)
