@@ -1,5 +1,5 @@
 from rest_framework import viewsets, mixins
-from recept.models import (
+from .models import (
     Tags,
     Recipes,
     Ingredients,

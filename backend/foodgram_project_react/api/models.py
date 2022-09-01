@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import UserAccount
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Recipes(models.Model):
@@ -32,6 +33,9 @@ class Recipes(models.Model):
         verbose_name='Описание рецепта'
     )
     cooking_time = models.IntegerField(
+        validators=[
+            MinValueValidator(0, 'Время приготовления не может быть меньше 0'),
+        ],
         verbose_name='Время приготовления'
     )
     pub_date = models.DateTimeField(
@@ -92,12 +96,18 @@ class Ingredients(models.Model):
         verbose_name = 'Ингредиенты'
         verbose_name_plural = 'Ингредиенты'
 
+    def __str__(self):
+        return f'{self.ingridients_amout} {self.name} {self.measurement_unit}'
+
 
 class IngredientsAmout(models.Model):
     amout = models.FloatField(
         null=True,
         verbose_name='Количество'
     )
+
+    def __str__(self):
+        return f'{self.amout}'
 
 
 class RecipesTags(models.Model):

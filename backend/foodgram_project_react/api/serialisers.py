@@ -1,14 +1,15 @@
 
-from dataclasses import field
 # from djoser.serializers import UserCreateSerializer, UserSerializer
+from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from recept.models import (
+from .models import (
     Ingredients,
     Recipes,
     Tags,
-    Follow
+    Follow,
+    IngredientsAmout
 )
 from users.models import UserAccount
 User = get_user_model()
@@ -53,6 +54,11 @@ User = get_user_model()
 #     current_password = serializers.CharField(reqired=True)
 #     new_password = serializers.CharField(reqired=True)
 
+class IngredientsAmoutSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = IngredientsAmout
+        fields = ('__all__')
+
 
 class TagsSerialiser(serializers.ModelSerializer):
     """Сериализатор модели Tags"""
@@ -69,18 +75,7 @@ class TagsSerialiser(serializers.ModelSerializer):
 
 class IngredientsSerialier(serializers.ModelSerializer):
     """Сериализотор модели Ingredients."""
-
-    class Meta:
-        model = Ingredients
-        fields = (
-            'id',
-            'name',
-            'measurement_unit'
-        )
-        read_only = ('__all__')
-
-
-class IngredientRecipesSerialiser(serializers.ModelSerializer):
+    amout = serializers.ReadOnlyField(source='ingridients_amout.amout')
 
     class Meta:
         model = Ingredients
@@ -92,22 +87,31 @@ class IngredientRecipesSerialiser(serializers.ModelSerializer):
         )
 
 
+class IngredientRecipesSerialiser(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredients
+        fields = (
+            'id',
+            'name',
+            'measurement_unit'
+
+        )
+
+
 class RecipesSerialiser(serializers.ModelSerializer):
     """Сериализатор Модели Recipes, с безопасными методами."""
     is_favorited = serializers.SerializerMethodField(default=False)
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagsSerialiser(many=True)
-    # ingridients = IngredientsSerialier(
-    #     many=True,
-    #     read_only=True
-    # )
+    ingridients = IngredientsSerialier()
 
     class Meta:
         model = Recipes
         fields = (
-            #    'tags',
+            'tags',
             'author',
-            # 'ingridients',
+            'ingridients',
             'is_favorited',
             'is_in_shopping_cart',
             'name',
@@ -115,7 +119,6 @@ class RecipesSerialiser(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
-        read_only = '__all__'
 
     def get_is_favorited(self, obj):
         if self.context['request'].user:
