@@ -4,12 +4,13 @@ from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
+from users.serializers import UserAccountViewset
 from .models import (
     Ingredients,
     Recipes,
     Tags,
     Follow,
-    IngredientsAmout
+    # IngredientsAmout
 )
 from users.models import UserAccount
 User = get_user_model()
@@ -54,10 +55,10 @@ User = get_user_model()
 #     current_password = serializers.CharField(reqired=True)
 #     new_password = serializers.CharField(reqired=True)
 
-class IngredientsAmoutSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = IngredientsAmout
-        fields = ('__all__')
+# class IngredientsAmoutSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = IngredientsAmout
+#         fields = ('__all__')
 
 
 class TagsSerialiser(serializers.ModelSerializer):
@@ -104,14 +105,15 @@ class RecipesSerialiser(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField(default=False)
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagsSerialiser(many=True)
-    ingridients = IngredientsSerialier()
+    #ingridients = IngredientsSerialier()
+    author = UserAccountViewset()
 
     class Meta:
         model = Recipes
         fields = (
             'tags',
             'author',
-            'ingridients',
+            # 'ingridients',
             'is_favorited',
             'is_in_shopping_cart',
             'name',

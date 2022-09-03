@@ -1,6 +1,9 @@
 from django.db import models
 from users.models import UserAccount
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+User = get_user_model()
 
 
 class Recipes(models.Model):
@@ -10,15 +13,14 @@ class Recipes(models.Model):
         verbose_name='Теги'
     )
     author = models.ForeignKey(
-        UserAccount,
+        User,
         on_delete=models.PROTECT,
         related_name='author',
         verbose_name='Автор'
     )
-    ingridients = models.ForeignKey(
-        'Ingredients',
-        on_delete=models.CASCADE,
-        related_name='ingridients',
+    ingridients = models.ManyToManyField(
+        'AmountIngredients',
+        related_name='recipes',
         verbose_name='Ингридиенты'
     )
     name = models.CharField(
@@ -50,6 +52,38 @@ class Recipes(models.Model):
         return self.name
 
 
+class Ingredients(models.Model):
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Ингридиент'
+    )
+    measurement_unit = models.CharField(
+        max_length=25,
+        verbose_name='Единица измерения'
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиенты'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f'{self.name} {self.measurement_unit}'
+
+
+class AmountIngredients(models.Model):
+    ingredient = models.ForeignKey(
+        'Ingredients',
+        on_delete=models.CASCADE,
+        related_name='amout_recipes',
+        verbose_name='Ингридиент'
+    )
+    amout = models.PositiveSmallIntegerField(
+        validators=(
+            MinValueValidator(0),
+        )
+    )
+
+
 class Tags(models.Model):
     name = models.CharField(
         max_length=200,
@@ -74,42 +108,6 @@ class Tags(models.Model):
         return f'{self.name} {self.color} {self.slug}'
 
 
-class Ingredients(models.Model):
-    name = models.CharField(
-        max_length=200,
-        verbose_name='Ингридиент'
-    )
-    measurement_unit = models.CharField(
-        max_length=25,
-        verbose_name='Единица измерения'
-    )
-    ingridients_amout = models.ForeignKey(
-        'IngredientsAmout',
-        on_delete=models.CASCADE,
-        related_name='isamout',
-        blank=True,
-        verbose_name='Количество',
-        null=True
-    )
-
-    class Meta:
-        verbose_name = 'Ингредиенты'
-        verbose_name_plural = 'Ингредиенты'
-
-    def __str__(self):
-        return f'{self.ingridients_amout} {self.name} {self.measurement_unit}'
-
-
-class IngredientsAmout(models.Model):
-    amout = models.FloatField(
-        null=True,
-        verbose_name='Количество'
-    )
-
-    def __str__(self):
-        return f'{self.amout}'
-
-
 class RecipesTags(models.Model):
     tags = models.ForeignKey(
         Tags,
@@ -132,13 +130,13 @@ class RecipesTags(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        UserAccount,
+        User,
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='Пользователь'
     )
     author = models.ForeignKey(
-        UserAccount,
+        User,
         on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Автор'

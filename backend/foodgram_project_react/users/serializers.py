@@ -19,7 +19,7 @@ class UserAccountViewset(UserCreateSerializer):
 class UserAccountIdViewset(UserCreateSerializer):
     class Meta:
         model = User
-        fields = tuple(User.REQUIRED_FIELDS) +(
+        fields = tuple(User.REQUIRED_FIELDS) + (
             'username',
-            settings.USER_ID_FIELDS
+            # settings.USER_ID_FIELDS
         )
