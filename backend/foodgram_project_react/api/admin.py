@@ -6,7 +6,8 @@ from .models import (
     Ingredients,
     Follow,
     RecipesTags,
-    UserAccount
+    UserAccount,
+    AmountIngredients
 )
 
 
@@ -20,7 +21,8 @@ class AdminSite(admin.ModelAdmin):
         'ingridients',
         'author',
         'name',
-        'text'
+        'text',
+        'cooking_time'
     )
     # inlines = (
     #     TagsAdmin,
@@ -30,7 +32,7 @@ class AdminSite(admin.ModelAdmin):
 admin.site.register(Recipes, AdminSite)
 admin.site.register(Tags)
 admin.site.register(Ingredients)
-# admin.site.register(IngredientsAmout)
+admin.site.register(AmountIngredients)
 admin.site.register(Follow)
 admin.site.register(RecipesTags)
 admin.site.register(UserAccount)

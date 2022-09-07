@@ -1,9 +1,6 @@
 from django.db import models
 from users.models import UserAccount
-from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-User = get_user_model()
 
 
 class Recipes(models.Model):
@@ -13,13 +10,13 @@ class Recipes(models.Model):
         verbose_name='Теги'
     )
     author = models.ForeignKey(
-        User,
+        UserAccount,
         on_delete=models.PROTECT,
         related_name='author',
         verbose_name='Автор'
     )
     ingridients = models.ManyToManyField(
-        'AmountIngredients',
+        'Ingredients',
         related_name='recipes',
         verbose_name='Ингридиенты'
     )
@@ -36,7 +33,7 @@ class Recipes(models.Model):
     )
     cooking_time = models.IntegerField(
         validators=[
-            MinValueValidator(0, 'Время приготовления не может быть меньше 0'),
+            MinValueValidator(1, 'Время приготовления не может быть меньше 1'),
         ],
         verbose_name='Время приготовления'
     )
@@ -71,17 +68,24 @@ class Ingredients(models.Model):
 
 
 class AmountIngredients(models.Model):
-    ingredient = models.ForeignKey(
+    ingredients = models.ForeignKey(
         'Ingredients',
         on_delete=models.CASCADE,
-        related_name='amout_recipes',
+        related_name='amount_recipes',
         verbose_name='Ингридиент'
     )
-    amout = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         validators=(
-            MinValueValidator(0),
+            MinValueValidator(1, 'Количество не может быть меньше 1.'),
         )
     )
+
+    class Meta:
+        verbose_name = 'Количество'
+        verbose_name_plural = 'Количество'
+
+    def __str__(self) -> str:
+        return f'{self.amount}'
 
 
 class Tags(models.Model):
@@ -110,12 +114,12 @@ class Tags(models.Model):
 
 class RecipesTags(models.Model):
     tags = models.ForeignKey(
-        Tags,
+        'Tags',
         on_delete=models.DO_NOTHING,
         verbose_name='Теги'
     )
     recipes = models.ForeignKey(
-        Recipes,
+        'Recipes',
         on_delete=models.CASCADE,
         verbose_name='Рецепты'
     )
@@ -130,13 +134,13 @@ class RecipesTags(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User,
+        UserAccount,
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='Пользователь'
     )
     author = models.ForeignKey(
-        User,
+        UserAccount,
         on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Автор'
@@ -151,3 +155,16 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"Последователь: '{self.user}', автор: '{self.author}'"
+
+
+class Favorites(models.Model):
+    user = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='selecte'
+    )
+    recipes = models.ForeignKey(
+        'Recipes',
+        on_delete=models.CASCADE,
+        related_name='selectd'
+    )

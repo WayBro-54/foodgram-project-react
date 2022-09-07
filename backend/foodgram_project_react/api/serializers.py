@@ -1,11 +1,12 @@
 
 # from djoser.serializers import UserCreateSerializer, UserSerializer
-from dataclasses import field
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from users.serializers import UserAccountViewset
+from .validators import validate_username
 from .models import (
+    AmountIngredients,
     Ingredients,
     Recipes,
     Tags,
@@ -15,6 +16,21 @@ from .models import (
 from users.models import UserAccount
 User = get_user_model()
 
+
+class UsernameValidationMixin:
+    """Миксин-валидатор лоя поля username."""
+
+    def validate_username(self, value):
+        return validate_username(value)
+
+
+class UserSerializer(serializers.ModelSerializer, UsernameValidationMixin):
+    """"""
+    class Meta:
+        model = UserAccount
+        fields = (
+
+        )
 
 # class UserCreateSerialiser(UserCreateSerializer):
 #     class Meta(UserCreateSerializer.Meta):
@@ -61,7 +77,7 @@ User = get_user_model()
 #         fields = ('__all__')
 
 
-class TagsSerialiser(serializers.ModelSerializer):
+class TagsSerializer(serializers.ModelSerializer):
     """Сериализатор модели Tags"""
     class Meta:
         model = Tags
@@ -74,46 +90,74 @@ class TagsSerialiser(serializers.ModelSerializer):
         read_only = ('__all__')
 
 
-class IngredientsSerialier(serializers.ModelSerializer):
-    """Сериализотор модели Ingredients."""
-    amout = serializers.ReadOnlyField(source='ingridients_amout.amout')
+class TagsCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Ingredients
+        model = Tags
+        fields = (
+            'id',
+        )
+
+
+class IngredientsSerializer(serializers.ModelSerializer):  # Done
+    """Сериализотор модели Ingredients."""
+    id = serializers.ReadOnlyField(source='ingredients_id.id')
+    name = serializers.ReadOnlyField(source='ingredients_id.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredients_id.measurement_unit')
+
+    class Meta:
+        model = AmountIngredients
         fields = (
             'id',
             'name',
             'measurement_unit',
-            'amout'
+
+        )
+        read_only = (
+            'id',
+            'name',
+            'measurement_unit',
+
         )
 
 
-class IngredientRecipesSerialiser(serializers.ModelSerializer):
+class IngredientRecipesSerializer(serializers.ModelSerializer):  # Done
+    """Сериализатор для добавения рецептов."""
 
     class Meta:
         model = Ingredients
         fields = (
             'id',
-            'name',
-            'measurement_unit'
-
+            'amount'
         )
 
 
-class RecipesSerialiser(serializers.ModelSerializer):
+class RecipesCreateSerializer(serializers.ModelSerializer):
+    tags = Tags
+
+    class Meta:
+        model = Recipes
+        fields = (
+            '__all__'
+        )
+
+
+class RecipesSerializer(serializers.ModelSerializer):
     """Сериализатор Модели Recipes, с безопасными методами."""
     is_favorited = serializers.SerializerMethodField(default=False)
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = TagsSerialiser(many=True)
-    #ingridients = IngredientsSerialier()
+    tags = TagsSerializer(many=True)
+    ingridients = IngredientsSerializer(many=True)
     author = UserAccountViewset()
 
     class Meta:
         model = Recipes
         fields = (
+            'id',
             'tags',
             'author',
-            # 'ingridients',
+            'ingridients',
             'is_favorited',
             'is_in_shopping_cart',
             'name',
