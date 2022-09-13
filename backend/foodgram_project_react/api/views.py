@@ -3,7 +3,6 @@ import csv
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from .models import (Favorite, Ingredient, IngredientRecipe, Recipe,
@@ -12,6 +11,7 @@ from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 from users.models import Subscribe, UserAccount
 
 from .filters import IngredientFilter, RecipeFilter
@@ -88,9 +88,8 @@ class CustomUserViewSet(UserViewSet):
                 author,
                 context={'request': request}
             )
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if request.method == 'DELETE':
             if not subscribe.exists():
                 data = {'errors': 'Вы не подписаны на данного автора.'}
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
