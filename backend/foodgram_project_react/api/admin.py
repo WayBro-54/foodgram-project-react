@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from users.models import UserAccount, Subscribe
 from .models import (Favorite, Ingredient, IngredientRecipe,
                      Recipe, ShoppingCart, Tag)
