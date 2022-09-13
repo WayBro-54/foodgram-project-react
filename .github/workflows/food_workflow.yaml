@@ -52,6 +52,7 @@ jobs:
         run: |
           cd backend/foodgram_project_react/
           python3 manage.py test
+          
   build:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
