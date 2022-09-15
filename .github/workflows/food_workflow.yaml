@@ -50,7 +50,7 @@ jobs:
           POSTGRES_DB: ${{ secrets.DB_NAME }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          cd backend/foodgram_project_react/
+          cd backend/foodgram/
           python3 manage.py test
 
   build:
