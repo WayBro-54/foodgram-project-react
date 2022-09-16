@@ -5,6 +5,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+
 from users.models import Subscribe
 
 from .models import Favorite, Ingredient, IngredientRecipe, Recipe, Tag
@@ -71,10 +72,8 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         limit = self.context['request'].query_params.get('recipes_limit')
-        if limit is None:
-            recipes = obj.recipes.all()
-        else:
-            recipes = obj.recipes.all()[:int(limit)]
+        recipes = obj.recipes.all() if not limit else obj.recipes.all()[
+            :int(limit)]
         return SubscriptionsRecipeSerializer(recipes, many=True).data
 
     def get_recipes_count(self, obj):
@@ -130,8 +129,12 @@ class RecipeListSerializer(serializers.ModelSerializer):
         many=True,
         source='ingredient_recipe'
     )
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField(
+        method_name='is_favorited'
+    )
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='is_in_shopping_cart'
+    )
 
     class Meta:
         model = Recipe
@@ -174,12 +177,22 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, data):
 
-        if self.initial_data.get('ingredients') == []:
+        if not self.initial_data.get('ingredients'):
             raise ValidationError('Нужно выбрать минимум 1 ингридиент!')
+        ingridient_id = []
         for ingredient in self.initial_data.get('ingredients'):
             if int(ingredient['amount']) <= 0:
                 raise ValidationError('Количество должно быть положительным!')
+            if ingredient['id'] in ingridient_id:
+                raise ValidationError(
+                    f'Дублирование ингридиентов запрещено!{ingredient.name}')
+            ingridient_id.append(ingredient['id'])
         return data
+
+    def validate_cooking_time(self, obj):
+        if obj < 1:
+            raise ValueError('Время приготовляения должно быть от 1 минуты.')
+        return obj
 
     def get_ingredients(self, obj):
         ingredients = IngredientRecipe.objects.filter(recipe=obj)
@@ -211,9 +224,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
+        # instance.image = validated_data.get('image', instance.image)
+        # instance.name = validated_data.get('name', instance.name)
+        # instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get(
             'cooking_time', instance.cooking_time
         )
@@ -229,7 +242,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 through_defaults={'amount': ingredient.get('amount')}
             )
         instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         serializer = RecipeListSerializer(

@@ -33,7 +33,7 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
 
     @action(detail=False,
-            methods=['post'],
+            methods=('post',),
             permission_classes=(IsAuthenticated, ))
     def set_password(self, request, pk=None):
         user = self.request.user
@@ -52,7 +52,7 @@ class CustomUserViewSet(UserViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False,
-            methods=['get'],
+            methods=('get', ),
             permission_classes=(IsAuthenticated, ))
     def subscriptions(self, request):
         user = request.user
@@ -66,7 +66,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=['get', 'delete'],
+        methods=('get', 'delete'),
         detail=True,
         permission_classes=(IsAuthenticated, )
     )
@@ -131,7 +131,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @action(
-        methods=['get', 'delete'],
+        methods=('get', 'delete'),
         detail=True,
         permission_classes=(IsAuthenticated, )
     )
@@ -160,8 +160,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=["get", "delete"],
-        permission_classes=[IsAuthenticated, ],
+        methods=['get', 'delete'],
+        permission_classes=(IsAuthenticated, ),
     )
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -190,9 +190,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=['get'],
+        methods=('get'),
         detail=False,
-        permission_classes=[IsAuthenticated, ],
+        permission_classes=(IsAuthenticated, ),
     )
     def download_shopping_cart(self, request):
         """Скачать список покупок."""

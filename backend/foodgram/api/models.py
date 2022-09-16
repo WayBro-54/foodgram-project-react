@@ -1,3 +1,4 @@
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -42,6 +43,10 @@ class Ingredient(models.Model):
         ordering = ('name', )
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        validator = models.UniqueConstraint(
+            fields=('name', 'measurement_unit'),
+            name='Unique_name_measurement_unit'
+        )
 
     def __str__(self):
         return self.name
