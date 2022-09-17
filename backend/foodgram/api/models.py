@@ -43,7 +43,7 @@ class Ingredient(models.Model):
         ordering = ('name', )
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        validators = models.UniqueConstraint(
+        constraints = models.UniqueConstraint(
             fields=('name', 'measurement_unit'),
             name='Unique_name_measurement_unit'
         )
