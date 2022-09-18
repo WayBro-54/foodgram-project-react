@@ -6,7 +6,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-
   backend:
     image: waybro/foodgram_backend:latest
     restart: always
