@@ -89,7 +89,7 @@ jobs:
             cd foodgram-project-react/infra
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
             sudo docker compose stop
-            sudo docker compose rm backend
+            sudo docker compose rm foodgram_backend
             touch .env
             echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
