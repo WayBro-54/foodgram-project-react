@@ -20,7 +20,7 @@ services:
   frontend:
     image: waybro/foodgram_frontend:latest
     volumes:
-      - ./frontend/:/app/result_build/
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
 
