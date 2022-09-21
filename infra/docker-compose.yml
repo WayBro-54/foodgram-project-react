@@ -36,7 +36,6 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
-
 volumes:
   postgres_data:
   static_value:
