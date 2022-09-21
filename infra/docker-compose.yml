@@ -8,11 +8,12 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
+
   backend:
     image: waybro/foodgram_backend:latest
-    potrs:
-      - "8000"
     restart: always
+    ports:
+      - 8000
     volumes:
       - static_value:/code/static/
       - media_value:/code/media/
