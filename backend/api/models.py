@@ -1,9 +1,9 @@
 
-from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
-
-User = get_user_model()
+from users.models import User
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
 
 
 class Tag(models.Model):
@@ -43,12 +43,10 @@ class Ingredient(models.Model):
         ordering = ('name', )
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-
-
-constraints = models.UniqueConstraint(
-    fields=('name', 'measurement_unit'),
-    name='Unique_name_measurement_unit'
-)
+        # constraints = models.UniqueConstraint(
+        #     fields=('name', 'measurement_unit',),
+        #     name='Unique_name_measurement_unit',
+        # )
 
 
 def __str__(self):
@@ -76,6 +74,7 @@ class Recipe(models.Model):
         Ingredient,
         verbose_name='Ингредиенты',
         through='IngredientRecipe',
+        through_fields=('recipe', 'ingredient',),
     )
     tags = models.ManyToManyField(
         Tag,
@@ -138,13 +137,13 @@ class Favorite(models.Model):
         User,
         verbose_name='Пользователь',
         on_delete=models.CASCADE,
-        related_name='favorite_recipe',
+        related_name='favoriter',
     )
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Рецепт',
         on_delete=models.CASCADE,
-        related_name='favorite_recipe'
+        related_name='is_favorited'
     )
 
     class Meta:

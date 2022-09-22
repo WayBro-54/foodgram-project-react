@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from users.models import UserAccount, Subscribe
+from users.models import User, Subscribe
 from .models import (Favorite, Ingredient, IngredientRecipe,
                      Recipe, ShoppingCart, Tag)
 
@@ -8,7 +8,7 @@ from .models import (Favorite, Ingredient, IngredientRecipe,
 EMPTY_VALUE = '-пусто-'
 
 
-@admin.register(UserAccount)
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Представляет модель User в интерфейсе администратора."""
     list_display = ('id', 'username', 'first_name',

@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class UserAccount(AbstractUser):
+class User(AbstractUser):
     """Модель пользователя."""
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
@@ -37,13 +37,13 @@ class UserAccount(AbstractUser):
 class Subscribe(models.Model):
     """Модель подписки."""
     user = models.ForeignKey(
-        UserAccount,
+        User,
         verbose_name='Пользователь',
         related_name='follower',
         on_delete=models.CASCADE
     )
     author = models.ForeignKey(
-        UserAccount,
+        User,
         verbose_name='Автор',
         related_name='following',
         on_delete=models.CASCADE
@@ -57,3 +57,6 @@ class Subscribe(models.Model):
                 fields=('user', 'author', ),
                 name='unique_subscribe'),
         )
+
+    def __str__(self):
+        return f'{self.user}, {self.author}'

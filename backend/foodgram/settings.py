@@ -33,13 +33,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'api',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
     'drf_yasg',
     'django_filters',
-    'users.apps.UsersConfig',
-    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +104,7 @@ DJOSER = {
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', 'foodgram'),
+        'NAME': os.getenv('DB_NAME', 'foodgram1'),
         'USER': os.getenv('POSTGRES_USER', 'waybro'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Gatinap54'),
         'HOST': os.getenv('DB_HOST', "127.0.0.1"),
@@ -144,7 +144,7 @@ USE_I18N = True
 USE_TZ = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'users.UserAccount'
+AUTH_USER_MODEL = 'users.User'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

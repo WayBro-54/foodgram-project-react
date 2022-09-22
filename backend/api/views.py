@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import Subscribe, UserAccount
+from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorAdminOrReadOnly
@@ -30,7 +30,7 @@ class RetrieveListViewSet(mixins.ListModelMixin,
 
 
 class CustomUserViewSet(UserViewSet):
-    queryset = UserAccount.objects.all()
+    queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
     @action(detail=False,
@@ -57,7 +57,7 @@ class CustomUserViewSet(UserViewSet):
             permission_classes=(IsAuthenticated, ))
     def subscriptions(self, request):
         user = request.user
-        queryset = UserAccount.objects.filter(follower__user=user)
+        queryset = User.objects.filter(follower__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages,
@@ -73,7 +73,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id):
         user = self.request.user
-        author = get_object_or_404(UserAccount, id=id)
+        author = get_object_or_404(User, id=id)
         subscribe = Subscribe.objects.filter(user=user, author=author)
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
