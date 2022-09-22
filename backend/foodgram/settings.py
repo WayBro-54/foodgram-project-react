@@ -21,10 +21,7 @@ SECRET_KEY = os.getenv(
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '84.252.138.118',
-    '*'
-]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -104,7 +101,7 @@ DJOSER = {
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', 'foodgram1'),
+        'NAME': os.getenv('DB_NAME', 'postgres'),
         'USER': os.getenv('POSTGRES_USER', 'waybro'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Gatinap54'),
         'HOST': os.getenv('DB_HOST', "127.0.0.1"),
