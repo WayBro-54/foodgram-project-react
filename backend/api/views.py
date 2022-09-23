@@ -16,11 +16,10 @@ from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorAdminOrReadOnly
-from .serializers import (CustomUserSerializer, FavoriteSerializer,
+from .serializers import (CustomUserSerializer, TagSerializer,
                           IngredientSerializer, PasswordSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
-                          ShoppingCartSerializer, SubscribeSerializer,
-                          TagSerializer)
+                          ShoppingCartSerializer, SubscribeSerializer,)
 
 
 class RetrieveListViewSet(mixins.ListModelMixin,
