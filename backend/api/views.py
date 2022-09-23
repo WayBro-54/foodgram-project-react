@@ -130,33 +130,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
-    @action(
-        methods=('get', 'delete'),
-        detail=True,
-        permission_classes=(IsAuthenticated, )
-    )
+    @action(methods=('get', 'delete'), detail=True,
+            permission_classes=(IsAuthenticated, ))
     def favorite(self, request, pk=None):
-        user = self.request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
-        in_favorite = Favorite.objects.filter(
-            user=user, recipe=recipe
-        )
-        if user.is_anonymous:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
         if request.method == 'GET':
-            if not in_favorite:
-                favorite = Favorite.objects.create(user=user, recipe=recipe)
-                serializer = RecipeListSerializer(favorite.recipe)
-                return Response(
-                    data=serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
+            return self.add_obj(Favorite, request.user, pk)
         elif request.method == 'DELETE':
-            if not in_favorite:
-                data = {'errors': 'Такого рецепта нет в избранных.'}
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-            in_favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return self.delete_obj(Favorite, request.user, pk)
+        return None
 
     @action(
         detail=True,
