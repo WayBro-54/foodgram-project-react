@@ -80,10 +80,10 @@ class SubscribeSerializer(serializers.ModelSerializer):
         return obj.recipes.count()
 
 
-# class FavoriteSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Recipe
-#         fields = ('id', 'name', 'image', 'cooking_time', )
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time', )
 
 
 class TagSerializer(serializers.ModelSerializer):
