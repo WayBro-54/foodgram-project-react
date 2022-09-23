@@ -147,7 +147,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             if not in_favorite:
                 favorite = Favorite.objects.create(user=user, recipe=recipe)
-                serializer = FavoriteSerializer(favorite.recipe)
+                serializer = FavoriteSerializer(favorite)
                 return Response(
                     data=serializer.data,
                     status=status.HTTP_201_CREATED
