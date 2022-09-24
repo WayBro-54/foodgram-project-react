@@ -134,11 +134,27 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(methods=('get', 'delete'), detail=True,
             permission_classes=(IsAuthenticated, ))
     def favorite(self, request, pk=None):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
+        in_favorite = Favorite.objects.filter(
+            user=user, recipe=recipe
+        )
+        if user.is_anonymous:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         if request.method == 'GET':
-            return self.add_obj(Favorite, request.user, pk)
+            if not in_favorite:
+                favorite = Favorite.objects.create(user=user, recipe=recipe)
+                serializer = FavoriteSerializer(favorite.recipe)
+                return Response(
+                    data=serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
         elif request.method == 'DELETE':
-            return self.delete_obj(Favorite, request.user, pk)
-        return None
+            if not in_favorite:
+                data = {'errors': 'Такого рецепта нет в избранных.'}
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            in_favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
@@ -197,40 +213,21 @@ class RecipesViewSet(viewsets.ModelViewSet):
             writer.writerow(item)
         return
 
-    def add_obj(self, model, user, pk):
-        if model.objects.filter(user=user, recipe__id=pk).exists():
-            return Response({
-                'errors': 'Рецепт уже добавлен в список'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        recipe = get_object_or_404(Recipe, id=pk)
-        model.objects.create(user=user, recipe=recipe)
-        serializer = FavoriteSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # def add_obj(self, model, user, pk):
+    #     if model.objects.filter(user=user, recipe__id=pk).exists():
+    #         return Response({
+    #             'errors': 'Рецепт уже добавлен в список'
+    #         }, status=status.HTTP_400_BAD_REQUEST)
+    #     recipe = get_object_or_404(Recipe, id=pk)
+    #     model.objects.create(user=user, recipe=recipe)
+    #     serializer = FavoriteSerializer(recipe)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_obj(self, model, user, pk):
-        obj = model.objects.filter(user=user, recipe__id=pk)
-        if obj.exists():
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({
-            'errors': 'Рецепт уже удален'
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    def add_obj(self, model, user, pk):
-        if model.objects.filter(user=user, recipe__id=pk).exists():
-            return Response({
-                'errors': 'Рецепт уже добавлен в список'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        recipe = get_object_or_404(Recipe, id=pk)
-        model.objects.create(user=user, recipe=recipe)
-        serializer = FavoriteSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete_obj(self, model, user, pk):
-        obj = model.objects.filter(user=user, recipe__id=pk)
-        if obj.exists():
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response({
-            'errors': 'Рецепт уже удален'
-        }, status=status.HTTP_400_BAD_REQUEST)
+    # def delete_obj(self, model, user, pk):
+    #     obj = model.objects.filter(user=user, recipe__id=pk)
+    #     if obj.exists():
+    #         obj.delete()
+    #         return Response(status=status.HTTP_204_NO_CONTENT)
+    #     return Response({
+    #         'errors': 'Рецепт уже удален'
+    #     }, status=status.HTTP_400_BAD_REQUEST)
