@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv(
     'SECRET_KEY', default='django-insecure-s9@5er^&uq)u04cj&z3-ud2xd41s4!lf94c*t=v%-826@+qufb')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['51.250.17.79', '*']
 
@@ -100,23 +100,23 @@ DJOSER = {
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-#         'NAME': os.getenv('DB_NAME', 'postgres'),
-#         'USER': os.getenv('POSTGRES_USER', 'waybro'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Gatinap54'),
-#         'HOST': os.getenv('DB_HOST', "127.0.0.1"),
-#         'PORT': os.getenv('DB_PORT', 5432),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', 'postgres'),
+        'USER': os.getenv('POSTGRES_USER', 'waybro'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Gatinap54'),
+        'HOST': os.getenv('DB_HOST', "127.0.0.1"),
+        'PORT': os.getenv('DB_PORT', 5432),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
