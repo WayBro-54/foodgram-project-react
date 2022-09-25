@@ -23,8 +23,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*', '84.252.137.70']
 
-# os.getenv('ALLOWED_HOSTS', '*')
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
