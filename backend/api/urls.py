@@ -3,18 +3,17 @@ from django.urls import include, path
 
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
 
-
-from .views import (TagsViewSet, IngredientsViewSet,
-                    RecipesViewSet, CustomUserViewSet)
+from .views import (CustomUserViewSet, IngredientsViewSet, RecipesViewSet,
+                    TagsViewSet)
 
 router_v1 = DefaultRouter()
-router_v1.register('users', CustomUserViewSet, basename='users')
-router_v1.register('tags', TagsViewSet, basename='tags')
-router_v1.register('ingredients', IngredientsViewSet, basename='ingredients')
-router_v1.register('recipes', RecipesViewSet, basename='recipes')
+router_v1.register(r'users', CustomUserViewSet, basename='users')
+router_v1.register(r'tags', TagsViewSet, basename='tags')
+router_v1.register(r'ingredients', IngredientsViewSet, basename='ingredients')
+router_v1.register(r'recipes', RecipesViewSet, basename='recipes')
 
 
 urlpatterns = [
@@ -22,6 +21,7 @@ urlpatterns = [
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ]
+
 
 schema_view = get_schema_view(
     openapi.Info(

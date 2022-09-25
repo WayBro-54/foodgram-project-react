@@ -1,11 +1,12 @@
 import csv
 
 from django.core.management.base import BaseCommand
-from api.models import Ingredient
+
+from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    help = 'Добавляет ингредиенты из сsv файла в базу данных.'
+    help = 'Добавляет ингредиенты из сsv файла в базу данных sqlite3.'
 
     def handle(self, *args, **options):
         with open(
