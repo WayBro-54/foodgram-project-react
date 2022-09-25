@@ -130,10 +130,10 @@ class RecipeListSerializer(serializers.ModelSerializer):
         source='ingredient_recipe'
     )
     is_favorited = serializers.SerializerMethodField(
-        method_name='is_favorited'
+        method_name='get_is_favorited'
     )
     is_in_shopping_cart = serializers.SerializerMethodField(
-        method_name='is_in_shopping_cart'
+        method_name='get_is_in_shopping_cart'
     )
 
     class Meta:

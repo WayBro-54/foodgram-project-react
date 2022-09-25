@@ -2,8 +2,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
-# from django.contrib.auth import get_user_model
-# User = get_user_model()
 
 
 class Tag(models.Model):
@@ -68,6 +66,9 @@ class Recipe(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='recipes/images/',
+        blank=True,
+        null=True
+
     )
     text = models.TextField('Описание')
     ingredients = models.ManyToManyField(
