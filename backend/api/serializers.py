@@ -1,3 +1,4 @@
+from enum import unique
 from django.contrib.auth import get_user_model
 from django.db.models import F
 from django.shortcuts import get_object_or_404
@@ -175,11 +176,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, data):
         ingredients = self.initial_data.get('ingredients')
-        if ingredients == []:
+        unique_ingredients = []
+        if not ingredients:
             raise ValidationError('Нужно выбрать минимум 1 ингридиент!')
         for ingredient in ingredients:
             if int(ingredient['amount']) <= 0:
                 raise ValidationError('Количество должно быть положительным!')
+            if ingredient in unique_ingredients:
+                raise ValueError('Ингридиенты должны быть уникальны!')
         return data
 
     def get_ingredients(self, obj):
@@ -203,7 +207,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.tags.set(validated_data.pop('tags'))
         for ingredient in validated_data.pop('ingredients'):
             id = ingredient.get('id')
-            amount = ingredient.get('amount')
+            amount = ingredient.get(
+                'amount')
             ingredient_id = get_object_or_404(
                 Ingredient, id=id)
             IngredientRecipe.objects.create(
