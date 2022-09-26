@@ -160,7 +160,6 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    # author = CustomUserSerializer(read_only=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
@@ -186,6 +185,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             unique_ingredients.append(ingredient)
         return data
 
+    def validate_cooking_time(self, obj):
+        if obj < 1:
+            return ValueError(f'время не может быть меньше 1! {obj}')
+        return obj
+
     def get_ingredients(self, obj):
         ingredients = IngredientRecipe.objects.filter(recipe=obj)
         return IngredientRecipeListSerializer(ingredients).data
@@ -203,10 +207,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 defaults={'amount': amount})
 
     def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        for ingredient in validated_data.pop('ingredients'):
+        for ingredient in ingredients:
             ingredient_id = get_object_or_404(
                 Ingredient, id=ingredient.get('id'))
             IngredientRecipe.objects.create(
@@ -217,9 +222,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get(
             'cooking_time', instance.cooking_time
         )
@@ -240,7 +242,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 through_defaults={'amount': amount}
             )
         instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         serializer = RecipeListSerializer(
