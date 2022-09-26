@@ -208,11 +208,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
-            id = ingredient.get('id')
-            amount = ingredient.get('amount')
-            ingredient_id = get_object_or_404(Ingredient, id=id)
+            ingredient_id = get_object_or_404(
+                Ingredient, id=ingredient.get('id'))
             IngredientRecipe.objects.create(
-                recipe=recipe, ingredient=ingredient_id, amount=amount
+                recipe=recipe, ingredient=ingredient_id, amount=ingredient.get(
+                    'amount')
             )
         recipe.save()
         return recipe
