@@ -183,6 +183,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 raise ValidationError('Количество должно быть положительным!')
             if ingredient in unique_ingredients:
                 raise ValueError('Ингридиенты должны быть уникальны!')
+            unique_ingredients.append(ingredient)
         return data
 
     def get_ingredients(self, obj):
