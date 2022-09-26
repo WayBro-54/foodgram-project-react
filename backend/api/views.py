@@ -156,7 +156,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=('get', 'delete', 'post'),
+        methods=('post', 'delete'),
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
@@ -168,7 +168,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'GET':
+        if request.method == 'post':
             if not in_shopping_cart:
                 shopping_cart = ShoppingCart.objects.create(
                     user=user,
