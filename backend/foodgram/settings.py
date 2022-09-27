@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['84.252.137.70', '*']
+ALLOWED_HOSTS = ['51.250.106.243', '*']
 # os.environ.get('ALLOWED_HOSTS')
 
 INSTALLED_APPS = [
