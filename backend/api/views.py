@@ -29,7 +29,7 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
 
     @action(detail=False,
-            methods=('post',),
+            methods=('POST',),
             permission_classes=(IsAuthenticated,))
     def set_password(self, request, pk=None):
         user = self.request.user
@@ -48,7 +48,7 @@ class CustomUserViewSet(UserViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False,
-            methods=('get',),
+            methods=('GET',),
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         queryset = User.objects.filter(follower__user=request.user)
@@ -61,7 +61,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=('get', 'delete'),
+        methods=('POST', 'DELETE'),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -71,7 +71,7 @@ class CustomUserViewSet(UserViewSet):
         subscribe = Subscribe.objects.filter(user=user, author=author)
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'GET':
+        if request.method == 'POST':
             if subscribe.exists():
                 data = {
                     'errors': ('Вы подписаны на этого автора, '
@@ -127,7 +127,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @action(
-        methods=('get', 'delete'),
+        methods=('POST', 'DELETE'),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -139,7 +139,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'GET':
+        if request.method == 'POST':
             if not in_favorite:
                 favorite = Favorite.objects.create(user=user, recipe=recipe)
                 serializer = FavoriteSerializer(favorite.recipe)
@@ -156,7 +156,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=('post', 'delete'),
+        methods=('POST', 'DELETE'),
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
@@ -168,7 +168,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'post':
+        if request.method == 'POST':
             if not in_shopping_cart:
                 shopping_cart = ShoppingCart.objects.create(
                     user=user,
@@ -187,7 +187,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=('get',),
+        methods=('POST',),
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
