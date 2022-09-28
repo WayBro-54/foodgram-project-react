@@ -30,7 +30,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=False,
             methods=('POST',),
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def set_password(self, request, pk=None):
         user = self.request.user
         if user.is_anonymous:
@@ -49,9 +49,10 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=False,
             methods=('GET',),
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def subscriptions(self, request):
-        queryset = User.objects.filter(follower__user=request.user)
+        user = request.user
+        queryset = User.objects.filter(follower__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages,
@@ -61,9 +62,9 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=('POST', 'DELETE'),
+        methods=['POST', 'DELETE'],
         detail=True,
-        permission_classes=(IsAuthenticated,)
+        permission_classes=(IsAuthenticated, )
     )
     def subscribe(self, request, id):
         user = self.request.user
@@ -95,7 +96,7 @@ class CustomUserViewSet(UserViewSet):
 class TagsViewSet(RetrieveListViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (AllowAny, )
     pagination_class = None
 
 
@@ -112,7 +113,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = (IsAuthorAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
@@ -129,7 +130,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         methods=('POST', 'DELETE'),
         detail=True,
-        permission_classes=(IsAuthenticated,)
+        permission_classes=(IsAuthenticated, )
     )
     def favorite(self, request, pk=None):
         user = self.request.user
@@ -157,7 +158,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=('POST', 'DELETE'),
-        permission_classes=(IsAuthenticated,),
+        permission_classes=[IsAuthenticated, ],
     )
     def shopping_cart(self, request, pk=None):
         user = self.request.user
@@ -187,7 +188,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=('POST',),
+        methods=('POST'),
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
