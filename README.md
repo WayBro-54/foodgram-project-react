@@ -2,11 +2,11 @@
 [![foodgram-project-react](https://github.com/Waybro-54/foodgram-project-react/actions/workflows/food_workflow.yaml/badge.svg)](https://github.com/Waybro-54/foodgram-project-react/actions/workflows/food_workflow.yaml)
 
 ### Администратор
-`Логин: dev@dev.ru`
-`Пароль: Ghbdtndctv54`
+Логин: `dev@dev.ru`
+Пароль: `def`
 
 ### адресс проекта
-84.252.137.70
+51.250.106.123
 
 ### Описание проекта  
 
