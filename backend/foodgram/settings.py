@@ -11,11 +11,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = False
 
-# os.environ.get('DEBUG', default=True)
-
 ALLOWED_HOSTS = ['51.250.105.5', '*']
-
-# os.environ.get('ALLOWED_HOSTS')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -67,12 +63,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', default='db'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', 'postgres'),
+        'USER': os.getenv('POSTGRES_USER', 'waybro'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'Gatinap54'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('DB_PORT', 5432),
     }
 }
 
@@ -131,8 +127,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'users.User'
 

@@ -8,14 +8,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Tag)
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
-from .mixins import RetrieveListViewSet
 from .permissions import IsAuthorAdminOrReadOnly
 from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           IngredientSerializer, PasswordSerializer,
@@ -24,13 +23,19 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           TagSerializer)
 
 
+class RetrieveListViewSet(mixins.ListModelMixin,
+                          mixins.RetrieveModelMixin,
+                          viewsets.GenericViewSet):
+    """Вьюсет для получения списка и объекта."""
+
+
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
     @action(detail=False,
             methods=('POST',),
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def set_password(self, request, pk=None):
         user = self.request.user
         if user.is_anonymous:
@@ -49,7 +54,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=False,
             methods=('GET',),
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(follower__user=user)
@@ -62,9 +67,9 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=['POST', 'DELETE'],
+        methods=('POST', 'DELETE'),
         detail=True,
-        permission_classes=(IsAuthenticated, )
+        permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, id):
         user = self.request.user
@@ -96,15 +101,15 @@ class CustomUserViewSet(UserViewSet):
 class TagsViewSet(RetrieveListViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
     pagination_class = None
 
 
 class IngredientsViewSet(RetrieveListViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (AllowAny, )
-    filter_backends = (DjangoFilterBackend, )
+    permission_classes = (AllowAny,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
     pagination_class = None
 
@@ -113,7 +118,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = (IsAuthorAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
@@ -130,7 +135,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         methods=('POST', 'DELETE'),
         detail=True,
-        permission_classes=(IsAuthenticated, )
+        permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
         user = self.request.user
@@ -158,7 +163,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         methods=('POST', 'DELETE'),
-        permission_classes=[IsAuthenticated, ],
+        permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
         user = self.request.user
