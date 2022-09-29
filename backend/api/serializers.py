@@ -20,7 +20,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed')
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
@@ -51,9 +52,11 @@ class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed')
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField(
+        method_name='get_recipes_count')
 
     class Meta:
         model = User
@@ -84,19 +87,19 @@ class SubscribeSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time', )
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'color', 'slug', )
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measurement_unit', )
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class IngredientRecipeListSerializer(serializers.ModelSerializer):
@@ -108,7 +111,7 @@ class IngredientRecipeListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientRecipe
-        fields = ('id', 'name', 'measurement_unit', 'amount', )
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class IngredientRecipeCreateSerializer(serializers.ModelSerializer):
@@ -117,10 +120,7 @@ class IngredientRecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = [
-            'id',
-            'amount'
-        ]
+        fields = ['id', 'amount']
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -130,8 +130,10 @@ class RecipeListSerializer(serializers.ModelSerializer):
         many=True,
         source='ingredient_recipe'
     )
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited')
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='get_is_in_shopping_cart')
 
     class Meta:
         model = Recipe
@@ -184,6 +186,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 raise ValueError('Ингридиенты должны быть уникальны!')
             unique_ingredients.append(ingredient)
         return data
+
+    def validate_cooking_time(self, obj):
+        if obj < 1:
+            raise ValueError(
+                f'Время приготовления должно быть больше 1 минуты: {obj}')
+        return obj
 
     def get_ingredients(self, obj):
         ingredients = IngredientRecipe.objects.filter(recipe=obj)
@@ -248,4 +256,4 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time', )
+        fields = ('id', 'name', 'image', 'cooking_time')
