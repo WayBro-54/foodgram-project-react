@@ -133,8 +133,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @action(
-        methods=('POST', 'DELETE'),
+        methods=('POST', 'DELETE',),
         detail=True,
+        url_path='favorite',
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
@@ -162,7 +163,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        methods=('POST', 'DELETE'),
+        url_path='shopping_cart',
+        methods=('POST', 'DELETE',),
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
@@ -195,6 +197,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         methods=('GET',),
         detail=False,
+        url_path='download_shopping_cart',
         permission_classes=(IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
