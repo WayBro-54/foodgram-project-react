@@ -193,7 +193,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=('POST'),
+        methods=('GET',),
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
