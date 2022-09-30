@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
+from .pagination import RecipesPagination
 from .permissions import IsAuthorAdminOrReadOnly
 from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           IngredientSerializer, PasswordSerializer,
@@ -120,6 +121,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = RecipesPagination
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
