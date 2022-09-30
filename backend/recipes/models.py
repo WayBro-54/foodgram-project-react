@@ -10,12 +10,11 @@ class Tag(models.Model):
     name = models.CharField(
         'Название',
         max_length=200,
-        unique=True
     )
     color = models.CharField(
         'HEX цвет',
         max_length=7,
-        unique=True)
+    )
     slug = models.SlugField(
         'Ссылка',
         max_length=200,
