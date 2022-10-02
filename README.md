@@ -2,11 +2,11 @@
 [![foodgram-project-react](https://github.com/Waybro-54/foodgram-project-react/actions/workflows/food_workflow.yaml/badge.svg)](https://github.com/Waybro-54/foodgram-project-react/actions/workflows/food_workflow.yaml)
 
 ### Администратор
-Логин: `dev@dev.ru`
+Логин: `dev1@dev.ru`
 Пароль: `def`
 
 ### адресс проекта
-51.250.106.123
+http://84.252.142.15
 
 ### Описание проекта  
 
@@ -14,7 +14,7 @@
 
 ### Список технологий
 - Python 3.10
-- Django 2.2.16
+- Django 3.2.19
 - Django Rest Framework  3.12.4
 - djoser 2.1.0
 - Yandex Cloud
