@@ -68,7 +68,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=('POST', 'DELETE'),
+        methods=('GET', 'DELETE'),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -78,7 +78,7 @@ class CustomUserViewSet(UserViewSet):
         subscribe = Subscribe.objects.filter(user=user, author=author)
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'POST':
+        if request.method == 'GET':
             if subscribe.exists():
                 data = {
                     'errors': ('Вы подписаны на этого автора, '
@@ -135,7 +135,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     @action(
-        methods=('POST', 'DELETE',),
+        methods=('GET', 'DELETE',),
         detail=True,
         url_path='favorite',
         permission_classes=(IsAuthenticated,)
@@ -148,7 +148,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'POST':
+        if request.method == 'GET':
             if not in_favorite:
                 favorite = Favorite.objects.create(user=user, recipe=recipe)
                 serializer = FavoriteSerializer(favorite.recipe)
@@ -166,7 +166,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         url_path='shopping_cart',
-        methods=('POST', 'DELETE',),
+        methods=('GET', 'DELETE',),
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
@@ -178,7 +178,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'POST':
+        if request.method == 'GET':
             if not in_shopping_cart:
                 shopping_cart = ShoppingCart.objects.create(
                     user=user,
@@ -197,7 +197,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=('POST',),
+        methods=('GET',),
         detail=False,
         url_path='download_shopping_cart',
         permission_classes=(IsAuthenticated,),
