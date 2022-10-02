@@ -68,7 +68,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=('GET', 'DELETE'),
+        methods=('POST', 'DELETE'),
         detail=True,
         permission_classes=(IsAuthenticated,)
     )
@@ -78,7 +78,7 @@ class CustomUserViewSet(UserViewSet):
         subscribe = Subscribe.objects.filter(user=user, author=author)
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'GET':
+        if request.method == 'POST':
             if subscribe.exists():
                 data = {
                     'errors': ('Вы подписаны на этого автора, '
@@ -166,7 +166,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(
         detail=True,
         url_path='shopping_cart',
-        methods=('GET', 'DELETE',),
+        methods=('POST', 'DELETE',),
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
@@ -178,7 +178,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         if user.is_anonymous:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if request.method == 'GET':
+        if request.method == 'POST':
             if not in_shopping_cart:
                 shopping_cart = ShoppingCart.objects.create(
                     user=user,
