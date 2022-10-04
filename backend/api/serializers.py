@@ -186,8 +186,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 raise ValidationError('Количество должно быть положительным!')
             if ingredient['id'] in unique_ingredients_id:
                 raise ValueError(
-                    f'Ингридиенты должны быть уникальны! {ingredient.name}')
+                    f'Ингридиенты должны быть уникальны!')
             unique_ingredients_id.append(ingredient['id'])
+            print(ingredients)
         return data
 
     def validate_cooking_time(self, obj):
