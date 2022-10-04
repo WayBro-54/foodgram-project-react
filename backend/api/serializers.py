@@ -180,13 +180,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get('ingredients')
         if ingredients == []:
             raise ValidationError('Нужно выбрать минимум 1 ингридиент!')
-        unique_ingredients = []
+        unique_ingredients_id = []
         for ingredient in ingredients:
             if int(ingredient['amount']) <= 0:
                 raise ValidationError('Количество должно быть положительным!')
-            if ingredient in unique_ingredients:
-                raise ValueError('Ингридиенты должны быть уникальны!')
-            unique_ingredients.append(ingredient)
+            if ingredient['id'] in unique_ingredients_id:
+                raise ValueError(
+                    f'Ингридиенты должны быть уникальны! {ingredient.name}')
+            unique_ingredients_id.append(ingredient['id'])
         return data
 
     def validate_cooking_time(self, obj):
